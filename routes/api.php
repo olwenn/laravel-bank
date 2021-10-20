@@ -14,18 +14,31 @@ Route::post('/loginClient', 'ClientsController@login');
 
 // Crear cuenta bancaria
 
-// Gestionar dinero de la cuenta
-Route::post('/eventAccount', 'EventsAccountController@manager');
 
-// Crear prestamo
-Route::post('/eventLoan', 'LoanController@create');
+//Registro
+Route::post('register', 'UserController@register');
 
-// Realizar pago
-Route::post('/eventLoan', 'LoanController@create');
+//Login
+Route::post('login', 'UserController@authenticate');
 
-// Retornar historial de prestamos
-Route::get('/eventLoanHistory', 'EventsLoanController@manager');
+Route::group(['middleware' => ['jwt.verify']], function() {
 
-// Retornar historial de pagos
-Route::get('/eventPaymentHistory', 'EventsPaymentHistoryController@manager');
+    Route::post('user','UserController@getAuthenticatedUser');
 
+    // Gestionar dinero de la cuenta
+    Route::post('/eventAccount', 'EventsAccountController@manager');
+
+    //Crear Cuenta bancaria
+    Route::post('/createAccount', 'BankAccountController@create');
+
+    // Crear prestamo
+    Route::post('/eventLoan', 'LoanController@create');
+
+    // Retornar historial de prestamos
+    Route::get('/eventLoanHistory', 'EventsLoanController@manager');
+
+    // Retornar historial de pagos
+    Route::get('/eventPaymentHistory', 'EventsPaymentHistoryController@manager');
+
+
+});

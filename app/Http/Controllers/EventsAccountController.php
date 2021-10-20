@@ -6,26 +6,30 @@ use Illuminate\Http\Request;
 use App\Models\BankAccount;
 use App\Models\PaymentHistory;
 use App\Models\Loans;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class EventsAccountController extends Controller
 {
         
     public function manager( Request $request ){
+        $current_user = JWTAuth::parseToken()->authenticate();
         if ( $request->input( 'type' ) === 'deposit' ) {
 
             return $this->deposit(
                 $request->input( 'destination' ),
                 $request->input( 'quantity' )
             );
-
         } 
         elseif ($request->input( 'type' ) === 'withdraw' ) {
+
             return $this->withdraw (
                 $request->input('destination'),
                 $request->input('quantity')
             );
         }
         elseif ($request->input( 'type' ) === 'paid' ) {
+
             return $this->payment (
                 $request->input('destination'),
                 $request->input('quantity'),
@@ -34,7 +38,7 @@ class EventsAccountController extends Controller
             );
         }
         elseif ($request->input( 'type' ) === 'show' ) {
-            
+
             $account = BankAccount::findOrFail(
                 $request->input('destination')
             );
@@ -46,6 +50,11 @@ class EventsAccountController extends Controller
                         'total' => $account->total
                 ]
             ], 201);
+        }elseif ($request->input( 'type' ) === 'showAll' ) {
+
+            $accounts = BankAccount::where('id_client', $current_user->id )
+                        ->get();
+            return $accounts;
         }
         
     }

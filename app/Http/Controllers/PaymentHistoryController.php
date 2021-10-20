@@ -9,7 +9,10 @@ use App\Models\PaymentHistory;
 
 class PaymentHistoryController extends Controller
 {
-    
-        //Retorna el total en base al id padre
-        //$loans = Loans::where('bankAcc_id', $destination)->get();
+    public function return( Request $request ){
+
+        $origin = $request->input('destination');
+        $loans = Loans::where('bankAcc_id', $origin )->get();
+        return $loans;
+    }
 }
