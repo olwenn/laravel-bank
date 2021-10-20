@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Loans extends Model
 {
+    protected $fillable = [
+    'debt',
+    'total_paid',
+    'banAcc_id',
+    ];
     use HasFactory;
 }

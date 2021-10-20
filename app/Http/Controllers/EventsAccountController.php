@@ -18,7 +18,8 @@ class EventsAccountController extends Controller
 
             return $this->deposit(
                 $request->input( 'destination' ),
-                $request->input( 'quantity' )
+                $request->input( 'quantity' ),
+                $current_user
             );
         } 
         elseif ($request->input( 'type' ) === 'withdraw' ) {
@@ -59,11 +60,11 @@ class EventsAccountController extends Controller
         
     }
 
-    private function deposit($destination, $quantity){
-
+    private function deposit($destination, $quantity, $current_user,){
+        
         $account = BankAccount::firstOrCreate(
             [
-                'id' => $destination
+                'client_id' => $current_user->id,
             ]
         );
 

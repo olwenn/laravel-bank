@@ -15,9 +15,9 @@ class BankAccountController extends Controller
         $current_user = JWTAuth::parseToken()->authenticate();
         
         $bank_account = new BankAccount();
-        return $bank_account;
         $bank_account->client_id = $current_user->id;
         $bank_account->save();
+        return $bank_account;
     }
 
 }

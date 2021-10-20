@@ -19,7 +19,7 @@ class CreateBankAccountsTable extends Migration
             $table->unsignedBigInteger('client_id')->default(0);
 
             $table->foreign('client_id')
-                    ->references('id')->on('clients')
+                    ->references('id')->on('users')
                     ->onDelete('cascade')
                     ->onUpdate('cascade');
 

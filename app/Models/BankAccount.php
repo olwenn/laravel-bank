@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class BankAccount extends Model
 {
-    protected $fillable =  ['id'];
+    protected $fillable = [
+        'total',
+        'client_id',
+    ];
 
-    public function client(){
-        return $this->belongsTo('App\Models\Clients');
+    public function user(){
+        return $this->belongsTo('App\Models\Users');
     }
 
 }
