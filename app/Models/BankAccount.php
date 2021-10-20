@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class BankAccount extends Model
 {
-    use HasFactory;
+    protected $fillable =  ['id'];
+
+    public function client(){
+        return $this->belongsTo('App\Models\Clients');
+    }
+
 }

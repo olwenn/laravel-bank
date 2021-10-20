@@ -15,6 +15,15 @@ class CreateLoansTable extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
+
+            $table->integer('debt');
+            $table->integer('total_paid')->default(0);
+            $table->unsignedBigInteger('bankAcc_id');
+
+            $table->foreign('bankAcc_id')
+                    ->references('id')->on('bank_accounts')
+                    ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

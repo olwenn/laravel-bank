@@ -15,6 +15,15 @@ class CreatePaymentHistoriesTable extends Migration
     {
         Schema::create('payment_histories', function (Blueprint $table) {
             $table->id();
+
+            $table->string('reason');
+            $table->integer('quantity_paid');
+            $table->unsignedBigInteger('bankAcc_id');
+
+            $table->foreign('bankAcc_id')
+                    ->references('id')->on('bank_accounts')
+                    ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

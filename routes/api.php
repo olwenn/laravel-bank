@@ -11,13 +11,14 @@ use Illuminate\Support\Facades\Route;
 // Crear cuenta bancaria
 
 // Gestionar dinero de la cuenta
-Route::post('/eventAccount', 'EventController@store');
+Route::post('/eventAccount', 'EventsAccountController@manager');
 
-// Pedir prestamo
+// Gestionar prestamo
+Route::post('/eventLoan', 'EventsLoanController@manager');
 
 // Retornar historial de prestamos
-
-// Pagar parte de un prestamo
+Route::post('/eventLoanHistory', 'EventsLoanController@manager');
 
 // Retornar historial de pagos
+Route::post('/eventPaymentHistory', 'EventsPaymentHistoryController@manager');
 

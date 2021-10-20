@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Clients extends Model
 {
-    use HasFactory;
+    protected $fillable =  ['id'];
+
+    public function banksaccount(){
+        return $this->hasMany('App\Models\BankAccount');
+    }
 }
