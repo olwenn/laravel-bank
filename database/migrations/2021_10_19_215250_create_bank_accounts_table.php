@@ -16,11 +16,12 @@ class CreateBankAccountsTable extends Migration
         Schema::create('bank_accounts', function (Blueprint $table) {
             $table->id();
             $table->integer('total')->default(0);
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('client_id')->default(0);
 
             $table->foreign('client_id')
                     ->references('id')->on('clients')
-                    ->onDelete('cascade');
+                    ->onDelete('cascade')
+                    ->onUpdate('cascade');
 
             $table->timestamps();
         });

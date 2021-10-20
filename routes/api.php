@@ -7,18 +7,25 @@ use Illuminate\Support\Facades\Route;
 
 
 // Crear un usuario cliente
+Route::post('/createClient', 'ClientsController@create');
+
+// Logear un usuario cliente
+Route::post('/loginClient', 'ClientsController@login');
 
 // Crear cuenta bancaria
 
 // Gestionar dinero de la cuenta
 Route::post('/eventAccount', 'EventsAccountController@manager');
 
-// Gestionar prestamo
-Route::post('/eventLoan', 'EventsLoanController@manager');
+// Crear prestamo
+Route::post('/eventLoan', 'LoanController@create');
+
+// Realizar pago
+Route::post('/eventLoan', 'LoanController@create');
 
 // Retornar historial de prestamos
-Route::post('/eventLoanHistory', 'EventsLoanController@manager');
+Route::get('/eventLoanHistory', 'EventsLoanController@manager');
 
 // Retornar historial de pagos
-Route::post('/eventPaymentHistory', 'EventsPaymentHistoryController@manager');
+Route::get('/eventPaymentHistory', 'EventsPaymentHistoryController@manager');
 

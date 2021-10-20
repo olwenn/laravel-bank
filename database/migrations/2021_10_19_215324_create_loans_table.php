@@ -18,11 +18,13 @@ class CreateLoansTable extends Migration
 
             $table->integer('debt');
             $table->integer('total_paid')->default(0);
-            $table->unsignedBigInteger('bankAcc_id');
+            $table->unsignedBigInteger('bankAcc_id')->default(0);
+
 
             $table->foreign('bankAcc_id')
                     ->references('id')->on('bank_accounts')
-                    ->onDelete('cascade');
+                    ->onDelete('cascade')
+                    ->onUpdate('cascade');
 
             $table->timestamps();
         });
