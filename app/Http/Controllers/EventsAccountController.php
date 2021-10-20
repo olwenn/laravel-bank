@@ -14,6 +14,7 @@ class EventsAccountController extends Controller
         
     public function manager( Request $request ){
         $current_user = JWTAuth::parseToken()->authenticate();
+        
         if ( $request->input( 'type' ) === 'deposit' ) {
 
             return $this->deposit(
@@ -26,7 +27,8 @@ class EventsAccountController extends Controller
 
             return $this->withdraw (
                 $request->input('destination'),
-                $request->input('quantity')
+                $request->input('quantity'),
+                $current_user
             );
         }
         elseif ($request->input( 'type' ) === 'paid' ) {
@@ -35,7 +37,8 @@ class EventsAccountController extends Controller
                 $request->input('destination'),
                 $request->input('quantity'),
                 $request->input('reason'),
-                $request->input('id_loan')
+                $request->input('id_loan'),
+                $current_user
             );
         }
         elseif ($request->input( 'type' ) === 'show' ) {
@@ -51,7 +54,8 @@ class EventsAccountController extends Controller
                         'total' => $account->total
                 ]
             ], 201);
-        }elseif ($request->input( 'type' ) === 'showAll' ) {
+        }
+        elseif ($request->input( 'type' ) === 'showAll' ) {
 
             $accounts = BankAccount::where('id_client', $current_user->id )
                         ->get();
@@ -60,56 +64,61 @@ class EventsAccountController extends Controller
         
     }
 
-    private function deposit($destination, $quantity, $current_user,){
+    private function deposit($destination, $quantity, $current_user){
         
-        $account = BankAccount::firstOrCreate(
+        $account = BankAccount::findOrFail(
             [
+                'id' => $destination,
                 'client_id' => $current_user->id,
             ]
         );
-
-        $account->total += $quantity;
-        $account->save();
+        $account[0]->total += $quantity;
+        $account[0]->save();
 
         return response()->json(
             [
                 'destination' => [
-                    'id' => $account->id,
-                    'total' => $account->total
+                    'id' => $account[0]->id,
+                    'total' => $account[0]->total
             ]
         ], 201);
     }
 
-    private function withdraw ($origin, $quantity){
+    private function withdraw ($origin, $quantity,$current_user){
         
-        $account = BankAccount::findOrFail($origin);
+        $account = BankAccount::findOrFail(
+            [
+                'id' => $origin,
+                'client_id' => $current_user->id,
+            ]
+        );
 
         
-        $account->total -= $quantity;
-        $account->save();
+        $account[0]->total -= $quantity;
+        $account[0]->save();
 
         return response()->json(
             [
                 'origin' => [
-                    'id' => $account->id,
-                    'total' => $account->total
+                    'id' => $account[0]->id,
+                    'total' => $account[0]->total
             ]
         ], 201);
 
     }
 
-    private function payment( $destination, $quantity, $reason, $id_loan ){
-        $account = BankAccount::findOrFail( $destination );
+    private function payment( $destination, $quantity, $reason, $id_loan,$current_user ){
+        $account = BankAccount::findOrFail(
+            [
+                'id' => $destination,
+                'client_id' => $current_user->id,
+            ]
+        );
 
-        $account->total -= $quantity;
-        $account->save();
+        $account[0]->total -= $quantity;
+        $account[0]->save();
 
         
-        $paid = new PaymentHistory();
-        $paid->reason = $reason ;
-        $paid->quantity_paid = $quantity;
-        $paid->bankAcc_id = $destination;
-        $paid->save();
         if ($reason  === "loan") {
             //Consulta multiple
             $loan = Loans::where( 'bankAcc_id', $destination )
@@ -119,6 +128,14 @@ class EventsAccountController extends Controller
             $loan[0]->total_paid += $quantity;
             $loan[0]->save();
         }
+
+        
+        $paid = new PaymentHistory();
+        $paid->reason = $reason ;
+        $paid->quantity_paid = $quantity;
+        $paid->bankAcc_id = $destination;
+        $paid->save();
+
         return $account;
     }
 }

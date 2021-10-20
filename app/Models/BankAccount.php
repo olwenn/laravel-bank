@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class BankAccount extends Model
 {
     protected $fillable = [
+        'id',
         'total',
         'client_id',
     ];
