@@ -55,21 +55,21 @@
   Json ->  User 201
 
 --
-# Pago
+# Crear Prestamo
 
  POST / createLoan
 
   Json ->  User / Loan 201
 
 --
-# Pago
+# Mostrar Historial de prestamos
 
  POST / showLoanHistory
 
   Json ->  User 201
 
 --
-# Pago
+# Mostrar Historial de pagos
 
  POST / showPaymentHistory
 
