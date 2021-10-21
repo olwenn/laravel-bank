@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 //LOGIN
 
-Route::group(["middleware" => "apikey.validate"], function () {
+Route::group([ "middleware" => "apikey.validate" ], function () {
 
     // Crear un usuario cliente
     Route::post('/createClient', 'ClientsController@create');
