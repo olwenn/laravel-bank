@@ -84,7 +84,7 @@ class EventsAccountController extends Controller
         ], 201);
     }
 
-    private function withdraw ($origin, $quantity,$current_user){
+    private function withdraw($origin, $quantity,$current_user){
         
         $account = BankAccount::findOrFail(
             [
@@ -107,7 +107,7 @@ class EventsAccountController extends Controller
 
     }
 
-    private function payment( $destination, $quantity, $reason, $id_loan,$current_user ){
+    private function payment($destination, $quantity, $reason, $id_loan,$current_user ){
         $account = BankAccount::findOrFail(
             [
                 'id' => $destination,
