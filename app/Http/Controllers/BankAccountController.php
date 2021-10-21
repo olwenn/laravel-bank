@@ -17,7 +17,8 @@ class BankAccountController extends Controller
         $bank_account = new BankAccount();
         $bank_account->client_id = $current_user->id;
         $bank_account->save();
-        return $bank_account;
+        
+        return response()->json( compact( 'bank_account' ) , 201 );
     }
 
 }

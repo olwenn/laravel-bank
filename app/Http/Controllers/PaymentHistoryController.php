@@ -9,10 +9,22 @@ use App\Models\PaymentHistory;
 
 class PaymentHistoryController extends Controller
 {
-    public function return( Request $request ){
+    //Mostrar pagos
+    public function show( Request $request ){
 
-        $origin = $request->input('destination');
-        $loans = Loans::where('bankAcc_id', $origin )->get();
-        return $loans;
+        $current_user = JWTAuth::parseToken()->authenticate();
+
+        //Busqueda de la cuenta bancaria segun id_user
+        $accounts = BankAccount::where( 'client_id' , $current_user->id )
+                                ->get();
+        $loans = "";
+
+        foreach ($accounts as $value) {
+            
+            $loan = Loan::where( 'banckAcc_id' , $value->id )->get();
+            $loans += $loan;
+        }
+
+        return response()->json( compact( 'loans' ) , 201 );
     }
 }

@@ -12,23 +12,29 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 class EventsAccountController extends Controller
 {
         
+    //Metodo de mostrar cuentas
     public function show( Request $request ){
+
         $current_user = JWTAuth::parseToken()->authenticate();
-        
-        $accounts = BankAccount::where('client_id', $current_user->id )
-                        ->get();
-        return $accounts;
+
+        //Busqueda de la cuenta bancaria segun id_user
+        $accounts = BankAccount::where( 'client_id' , $current_user->id )
+                                ->get();
+
+        return response()->json( compact( 'accounts' ) , 201 );
     }
     
+    //Metodo de deposito
     public function deposit( Request $request ){
        
         $destination =  $request->input( 'destination' );
         $quantity =  $request->input( 'quantity' );
         $current_user = JWTAuth::parseToken()->authenticate();
         
-        $account = BankAccount::where( 'id', $destination )
-                            ->where( 'client_id', $current_user->id )            
-                            ->get();
+        //Busqueda de la cuenta bancaria segun id_cuenta / id_user
+        $account = BankAccount::where( 'id' , $destination )
+                                ->where( 'client_id' , $current_user->id )            
+                                ->get();
 
         $account[0]->total += $quantity;
         $account[0]->save();
@@ -39,17 +45,21 @@ class EventsAccountController extends Controller
                 'destination' => [
                     'id' => $account[0]->id,
                     'total' => $account[0]->total
-            ]
-        ], 201);
+                ]
+            ], 201);
+            
 
     }
 
+    //Metodo de retiro
     public function withdraw( Request $request ){
+
         $origin =  $request->input( 'origin' );
         $quantity =  $request->input( 'quantity' );
         $current_user = JWTAuth::parseToken()->authenticate();
         
-        $account = BankAccount::where( 'id', $origin )
+        //Busqueda de la cuenta bancaria segun id_cuenta / id_user
+        $account = BankAccount::where( 'id' , $origin )
                             ->where( 'client_id', $current_user->id )            
                             ->get();
 
@@ -61,11 +71,12 @@ class EventsAccountController extends Controller
                 'origin' => [
                     'id' => $account[0]->id,
                     'total' => $account[0]->total
-            ]
-        ], 201);
+                ]
+            ], 201);
 
     }
 
+    //Metodo de pago casual o prestamo
     public function payment( Request $request ){
 
         $destination =  $request->input( 'destination' );
@@ -74,19 +85,22 @@ class EventsAccountController extends Controller
         $id_loan =  $request->input( 'id_loan' );
         $current_user = JWTAuth::parseToken()->authenticate();
 
-        $account = BankAccount::where( 'id', $destination )
-                            ->where( 'client_id', $current_user->id )            
-                            ->get();
+        //Busqueda de la cuenta bancaria segun id_cuenta / id_user
+        $account = BankAccount::where( 'id' , $destination )
+                                ->where( 'client_id', $current_user->id )            
+                                ->get();
 
         $account[0]->total -= $quantity;
         $account[0]->save();
 
-        
-        if ($reason  === "loan") {
-            //Consulta multiple
-            $loan = Loans::where( 'bankAcc_id', $destination )
+        //Comprobar si se paga un prestamo
+        if ( $reason  === "loan" ) {
+            
+            //Busqueda del prestao segun id_cuenta / id_loan
+            $loan = Loans::where( 'bankAcc_id' , $destination )
                             ->where( 'id', $id_loan )            
                             ->get();
+
             $loan[0]->debt -= $quantity;
             $loan[0]->total_paid += $quantity;
             $loan[0]->save();
@@ -107,6 +121,6 @@ class EventsAccountController extends Controller
 
         
 
-        return $account;
+        return response()->json( compact( 'accounts' ) , 201 );
     }
 }

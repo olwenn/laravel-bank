@@ -7,47 +7,48 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(["middleware" => "apikey.validate"], function () {
 
-    // Crear un usuario cliente
-    Route::post('/createClient', 'ClientsController@create');
-
-    // Logear un usuario cliente
-    Route::post('/loginClient', 'ClientsController@login');
+   
 
     // Crear cuenta bancaria
 
 
     //Registro
-    Route::post('register', 'UserController@register');
+    Route::post('registerUser', 'UserController@register');
 
     //Login
-    Route::post('login', 'UserController@authenticate');
+    Route::post('loginUser', 'UserController@authenticate');
 
     Route::group(['middleware' => ['jwt.verify']], function() {
 
         Route::post('user','UserController@getAuthenticatedUser');
 
+        //Cambiar la contraseña del usuario
         Route::post('changeUserPasswd','UserController@changeUserPasswd');
-
-        // Gestionar dinero de la cuenta
-        Route::post('/showAccount', 'EventsAccountController@show');
-
-        Route::post('/depositAccount', 'EventsAccountController@deposit');
-
-        Route::post('/withdrawAccount', 'EventsAccountController@withdraw');
         
-        Route::post('/paymentAccount', 'EventsAccountController@payment');
-
         //Crear Cuenta bancaria
         Route::post('/createAccount', 'BankAccountController@createAccount');
 
+        //Mostrar las cuentas bancarias de un usuario
+        Route::get('/showAccount', 'EventsAccountController@show');
+
+        //Deposito
+        Route::post('/depositAccount', 'EventsAccountController@deposit');
+
+        //Retiro
+        Route::post('/withdrawAccount', 'EventsAccountController@withdraw');
+        
+        //Pago
+        Route::post('/paymentAccount', 'EventsAccountController@payment');
+
+        
         // Crear prestamo
-        Route::post('/eventLoan', 'LoanController@create');
+        Route::post('/createLoan', 'LoanController@create');
 
         // Retornar historial de prestamos
-        Route::get('/eventLoanHistory', 'EventsLoanController@manager');
+        Route::get('/showLoanHistory', 'LoanController@showLoanHistory');
 
         // Retornar historial de pagos
-        Route::get('/eventPaymentHistory', 'EventsPaymentHistoryController@manager');
+        Route::get('/showPaymentHistory', 'PaymentHistoryController@showPaymentHistory');
 
 
     });
