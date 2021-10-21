@@ -42,9 +42,9 @@ class UserController extends Controller
     }
 
 
-    public function register(Request $request)
-    {
-            $validator = Validator::make($request->all(), [
+    public function register(Request $request){
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
@@ -65,5 +65,24 @@ class UserController extends Controller
         $token = JWTAuth::fromUser($user);
 
         return response()->json(compact('user','token'),201);
+    }
+    
+    public function changeUserPasswd(Request $request){
+        $current_user = JWTAuth::parseToken()->authenticate();
+
+        $passwd_old =  $request->get( 'passwd_old' );
+        $passwd_new =  $request->input( 'passwd_new' );
+
+       
+
+        if(Hash::check($passwd_old, $current_user->password)) {
+            $current_user->password = Hash::make($passwd_new);
+            $current_user->save();
+            return $current_user;
+        }
+        return "error";
+        
+
+        
     }
 }

@@ -26,11 +26,19 @@ Route::group(["middleware" => "apikey.validate"], function () {
 
         Route::post('user','UserController@getAuthenticatedUser');
 
+        Route::post('changeUserPasswd','UserController@changeUserPasswd');
+
         // Gestionar dinero de la cuenta
-        Route::post('/eventAccount', 'EventsAccountController@manager');
+        Route::post('/showAccount', 'EventsAccountController@show');
+
+        Route::post('/depositAccount', 'EventsAccountController@deposit');
+
+        Route::post('/withdrawAccount', 'EventsAccountController@withdraw');
+        
+        Route::post('/paymentAccount', 'EventsAccountController@payment');
 
         //Crear Cuenta bancaria
-        Route::post('/createAccount', 'BankAccountController@create');
+        Route::post('/createAccount', 'BankAccountController@createAccount');
 
         // Crear prestamo
         Route::post('/eventLoan', 'LoanController@create');

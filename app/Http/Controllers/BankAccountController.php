@@ -11,7 +11,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 class BankAccountController extends Controller
 {
     
-    public function create( Request $request ){
+    public function createAccount( Request $request ){
         $current_user = JWTAuth::parseToken()->authenticate();
         
         $bank_account = new BankAccount();
