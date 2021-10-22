@@ -87,17 +87,16 @@ class EventsAccountController extends Controller
 
         //Busqueda de la cuenta bancaria segun id_cuenta / id_user
         $accounts = BankAccount::where( 'id' , $destination )
-                                ->where( 'client_id', $current_user->id )            
+                                ->where( 'client_id' , $current_user->id )            
                                 ->get();
         
-        
-
         //Comprobar si se paga un prestamo
         if ( $reason  === "loan" ) {
             $account = $accounts[0];
             $account->total -= $quantity;
             $account->save();
-            //Busqueda del prestao segun id_cuenta / id_loan
+
+            //Busqueda del prestamo segun id_cuenta / id_loan
             $loan = Loans::where( 'bankAcc_id' , $destination )
                             ->where( 'id', $id_loan )            
                             ->get();
@@ -111,18 +110,18 @@ class EventsAccountController extends Controller
             $paid->quantity_paid = $quantity;
             $paid->bankAcc_id = $destination;
             $paid->save();
+
         }else{
             $account = $accounts[0];
             $account->total -= $quantity;
             $account->save();
+
             $paid = new PaymentHistory();
             $paid->reason = $reason ;
             $paid->quantity_paid = $quantity;
             $paid->bankAcc_id = $destination;
             $paid->save();
         }
-
-        
 
         return response()->json( compact( 'account' ) , 201 );
     }

@@ -41,7 +41,9 @@ class LoanController extends Controller
         foreach ($accounts as $value) {
             
             $loan = Loans::where( 'bankAcc_id' , $value->id )->get();
-            $loans = array_merge($loans,json_decode($loan,true));
+            
+            //Merge de todos los Json encontrados en las busquedas 
+            $loans = array_merge( $loans,json_decode( $loan , true ) );
         }
 
         return response()->json( compact( 'loans' ) , 201 );

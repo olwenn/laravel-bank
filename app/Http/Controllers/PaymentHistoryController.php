@@ -9,8 +9,8 @@ use App\Models\PaymentHistory;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
-class PaymentHistoryController extends Controller
-{
+class PaymentHistoryController extends Controller{
+    
     //Mostrar pagos
    public function showPaymentHistory( Request $request ){
 
@@ -24,7 +24,9 @@ class PaymentHistoryController extends Controller
     foreach ($accounts as $value) {
         
         $paid = PaymentHistory::where( 'bankAcc_id' , $value->id )->get();
-        $paids = array_merge($paids,json_decode($paid,true));
+        
+        //Merge de todos los Json encontrados en las busquedas 
+        $paids = array_merge( $paids , json_decode( $paid , true ) );
     }
 
     return response()->json( compact( 'paids' ) , 201 );
