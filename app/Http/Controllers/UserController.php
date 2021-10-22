@@ -98,7 +98,7 @@ class UserController extends Controller
             return response()->json( compact( 'current_user' ) , 201 );
         }
         
-        return "error";
+        return response()->json(['Error, password has not been changed ']);
         
 
         
