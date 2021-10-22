@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Loans;
 use App\Models\BankAccount;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class LoanController extends Controller
 {
@@ -12,12 +14,12 @@ class LoanController extends Controller
     public function create( Request $request ){
         
         $account = BankAccount::findOrFail(
-            $request->input( 'destination' )
+            $request->input( 'account_id' )
         );
 
         $loan = new Loans();
         $loan->debt = $request->input( 'quantity' );
-        $loan->bankAcc_id = $request->input( 'destination' );
+        $loan->bankAcc_id = $request->input( 'account_id' );
         $loan->save();
 
         $account->total += $request->input( 'quantity' );
@@ -27,19 +29,19 @@ class LoanController extends Controller
     }
     
     //Mostrar prestamos
-    public function show( Request $request ){
+    public function showLoanHistory( Request $request ){
 
         $current_user = JWTAuth::parseToken()->authenticate();
 
         //Busqueda de la cuenta bancaria segun id_user
         $accounts = BankAccount::where( 'client_id' , $current_user->id )
                                 ->get();
-        $loans = "";
+        $loans = [];
 
         foreach ($accounts as $value) {
             
-            $loan = Loan::where( 'banckAcc_id' , $value->id )->get();
-            $loans += $loan;
+            $loan = Loans::where( 'bankAcc_id' , $value->id )->get();
+            $loans = array_merge($loans,json_decode($loan,true));
         }
 
         return response()->json( compact( 'loans' ) , 201 );

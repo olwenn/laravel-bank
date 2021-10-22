@@ -27,7 +27,7 @@ class EventsAccountController extends Controller
     //Metodo de deposito
     public function deposit( Request $request ){
        
-        $destination =  $request->input( 'destination' );
+        $destination =  $request->input( 'account_id' );
         $quantity =  $request->input( 'quantity' );
         $current_user = JWTAuth::parseToken()->authenticate();
         
@@ -42,7 +42,7 @@ class EventsAccountController extends Controller
         return response()->json(
             [
                 'error' => false ,
-                'destination' => [
+                'Account' => [
                     'id' => $account[0]->id,
                     'total' => $account[0]->total
                 ]
@@ -54,7 +54,7 @@ class EventsAccountController extends Controller
     //Metodo de retiro
     public function withdraw( Request $request ){
 
-        $origin =  $request->input( 'origin' );
+        $origin =  $request->input( 'account_id' );
         $quantity =  $request->input( 'quantity' );
         $current_user = JWTAuth::parseToken()->authenticate();
         
@@ -79,23 +79,24 @@ class EventsAccountController extends Controller
     //Metodo de pago casual o prestamo
     public function payment( Request $request ){
 
-        $destination =  $request->input( 'destination' );
+        $destination =  $request->input( 'account_id' );
         $quantity =  $request->input( 'quantity' );
         $reason =  $request->input( 'reason' );
         $id_loan =  $request->input( 'id_loan' );
         $current_user = JWTAuth::parseToken()->authenticate();
 
         //Busqueda de la cuenta bancaria segun id_cuenta / id_user
-        $account = BankAccount::where( 'id' , $destination )
+        $accounts = BankAccount::where( 'id' , $destination )
                                 ->where( 'client_id', $current_user->id )            
                                 ->get();
-
-        $account[0]->total -= $quantity;
-        $account[0]->save();
+        
+        
 
         //Comprobar si se paga un prestamo
         if ( $reason  === "loan" ) {
-            
+            $account = $accounts[0];
+            $account->total -= $quantity;
+            $account->save();
             //Busqueda del prestao segun id_cuenta / id_loan
             $loan = Loans::where( 'bankAcc_id' , $destination )
                             ->where( 'id', $id_loan )            
@@ -111,7 +112,9 @@ class EventsAccountController extends Controller
             $paid->bankAcc_id = $destination;
             $paid->save();
         }else{
-
+            $account = $accounts[0];
+            $account->total -= $quantity;
+            $account->save();
             $paid = new PaymentHistory();
             $paid->reason = $reason ;
             $paid->quantity_paid = $quantity;
@@ -121,6 +124,6 @@ class EventsAccountController extends Controller
 
         
 
-        return response()->json( compact( 'accounts' ) , 201 );
+        return response()->json( compact( 'account' ) , 201 );
     }
 }

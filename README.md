@@ -1,4 +1,3 @@
---
 # Crear un usuario 
 
  POST / registerUser
